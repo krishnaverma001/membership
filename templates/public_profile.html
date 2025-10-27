@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block title %}Public Profile{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Profile Header */
+.profile-header {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 30px 20px;
+    text-align: center;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    margin-top: 120px;
+    position: relative;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #CCE0F1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #003F5C;
+    font-size: 3rem;
+    margin: -60px auto 10px;
+    border: 5px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.member-since {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Section Cards */
+.section-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.section-card h3 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+/* Tables */
+.table th, .table td {
+    vertical-align: middle;
+}
+.table th {
+    color: var(--primary-color);
+}
+
+/* Skills / Languages */
+.skill-badge {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin: 5px 5px 0 0;
+    font-size: 0.9rem;
+}
+
+/* Resume Buttons */
+.btn-download, .btn-preview {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    margin-right: 10px;
+}
+
+.btn-download:hover, .btn-preview:hover {
+    background-color: #0056b3;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5" id="profileContainer">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar" id="profileAvatar"></div>
+        <div class="profile-name" id="fullName"></div>
+        <div class="member-since" id="memberSince"></div>
+        <div id="resumeSection" class="mt-3"></div>
+    </div>
+
+    <!-- Education & Experience -->
+    <div class="row">
+        <div class="col-md-6">
+            <div id="educationSection"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="experienceSection"></div>
+        </div>
+    </div>
+
+    <!-- Skills & Languages -->
+    <div class="row">
+        <div class="col-md-6">
+            <div id="skillsSection"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="languagesSection"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+const token = "{{ token }}";
+
+async function loadProfile() {
+    try {
+        const res = await fetch(`/api/profile/view/${token}/`);
+        if (!res.ok) throw new Error('Failed to load profile');
+        const data = await res.json();
+
+        // Avatar
+        const avatarDiv = document.getElementById('profileAvatar');
+        if (data.profile_photo) {
+            // data.profile_photo is already a URL string
+            avatarDiv.innerHTML = `<img src="${data.profile_photo}" alt="${data.full_name}">`;
+        } else {
+            avatarDiv.textContent = data.full_name?.charAt(0).toUpperCase() || '?';
+        }
+
+
+        // Name & member since
+        document.getElementById('fullName').textContent = data.full_name;
+        const createdDate = new Date(data.created_at);
+        document.getElementById('memberSince').textContent = `Member since ${createdDate.toLocaleDateString()}`;
+
+        // Education Table
+        const eduSec = document.getElementById('educationSection');
+        if (data.education_set?.length) {
+            let tableHTML = `<div class="section-card"><h3>Education</h3><div class="table-responsive"><table class="table table-hover align-middle"><thead><tr>
+                <th>Degree</th><th>Field</th><th>Institution</th><th>Duration</th><th>Description</th>
+            </tr></thead><tbody>`;
+            data.education_set.forEach(edu => {
+                tableHTML += `<tr>
+                    <td>${edu.degree}</td>
+                    <td>${edu.field_of_study}</td>
+                    <td>${edu.institution}</td>
+                    <td>${edu.start_date} to ${edu.end_date || 'Present'}</td>
+                    <td>${edu.description || '—'}</td>
+                </tr>`;
+            });
+            tableHTML += `</tbody></table></div></div>`;
+            eduSec.innerHTML = tableHTML;
+        }
+
+        // Experience Table
+        const expSec = document.getElementById('experienceSection');
+        if (data.work_experience_set?.length) {
+            let tableHTML = `<div class="section-card"><h3>Work Experience</h3><div class="table-responsive"><table class="table table-hover align-middle"><thead><tr>
+                <th>Position</th><th>Company</th><th>Duration</th><th>Description</th>
+            </tr></thead><tbody>`;
+            data.work_experience_set.forEach(exp => {
+                tableHTML += `<tr>
+                    <td>${exp.position}</td>
+                    <td>${exp.company}</td>
+                    <td>${exp.start_date} to ${exp.end_date || 'Present'}</td>
+                    <td>${exp.description || '—'}</td>
+                </tr>`;
+            });
+            tableHTML += `</tbody></table></div></div>`;
+            expSec.innerHTML = tableHTML;
+        }
+
+        // Skills
+        const skillsSec = document.getElementById('skillsSection');
+        if (data.skills?.length) {
+            skillsSec.innerHTML = `<div class="section-card"><h3>Skills</h3>` +
+                data.skills.map(s => `<span class="skill-badge">${s.name} (${s.proficiency})</span>`).join('') +
+                `</div>`;
+        }
+
+        // Resume Buttons
+        const resumeSec = document.getElementById('resumeSection');
+        if (data.resume) {
+            resumeSec.innerHTML = `
+                <a href="{% url 'public-resume' token %}" class="btn-preview" target="_blank">Preview Resume</a>
+                <a href="{% url 'public-resume' token %}" class="btn-download" download>Download Resume</a>
+            `;
+        }
+
+    } catch(err) {
+        document.getElementById('profileContainer').innerHTML =
+            `<p class="text-danger text-center">Error: ${err.message}</p>`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadProfile);
+</script>
+{% endblock %}

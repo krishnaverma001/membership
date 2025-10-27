@@ -1,0 +1,51 @@
+<!-- templates/navbar.html -->
+<nav class="navbar navbar-dark fixed-top" style="background-color: #003F5C;">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <i class="fas fa-id-card me-2"></i>Membership Portal
+        </a>
+
+        <!-- Hamburger button always visible -->
+        <button class="btn btn-outline-light d-flex align-items-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Offcanvas menu -->
+        <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item mb-3 d-flex align-items-center">
+                            <img src="{{ user.profile_photo.url|default:'/media/profiles/default-avatar.png' }}"
+                                 alt="Profile" class="rounded-circle me-2" width="40" height="40">
+                            <span class="text-white">{{ user.get_full_name|default:user.email }}</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'edit-profile' %}">Edit Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <button onclick="logout()" class="btn btn-link nav-link text-start">Logout</button>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,32 @@
+<!-- templates/link_not_found.html -->
+{% extends 'base.html' %}
+
+{% block title %}Link Not Found - Membership Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-spacer {
+        padding-top: 120px;
+        padding-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container page-spacer">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card text-center border-0 shadow">
+                <div class="card-body p-5">
+                    <i class="fas fa-unlink text-danger" style="font-size: 4rem; margin-bottom: 20px;"></i>
+                    <h2 class="card-title mb-3" style="color: #dc3545;">Link Not Found</h2>
+                    <p class="card-text mb-4">{{ message }}</p>
+                    <p class="text-muted mb-4">The profile link you're trying to access does not exist or has been removed.</p>
+                    <a href="/" class="btn btn-primary-custom btn-lg">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

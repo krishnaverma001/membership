@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Membership Portal{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 120px; margin-bottom: 50px;">
+  <div class="row justify-content-center">
+    <div class="col-lg-5">
+      <div class="card shadow border-0" style="border-radius: 10px;">
+        <div class="card-header text-center" style="background-color: #003F5C; color: white;">
+          <h3 class="my-2"><i class="fas fa-user-plus me-2"></i>Member Registration</h3>
+        </div>
+        <div class="card-body p-4">
+          <form id="registerForm" enctype="multipart/form-data">
+            <div class="row g-3">
+
+              <div class="col-md-6">
+                <label for="first_name" class="form-label">First Name</label>
+                <input type="text" id="first_name" class="form-control" required>
+              </div>
+
+              <div class="col-md-6">
+                <label for="last_name" class="form-label">Last Name</label>
+                <input type="text" id="last_name" class="form-control" required>
+              </div>
+
+              <div class="col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-control" required>
+              </div>
+
+              <div class="col-md-6">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" id="phone" class="form-control">
+              </div>
+
+              <div class="col-md-6">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                  <input type="password" id="password" class="form-control" required>
+                  <button type="button" class="btn btn-outline-secondary" style="border-color:#ced4da" id="togglePassword">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="password_confirm" class="form-label">Confirm Password</label>
+                <div class="input-group">
+                  <input type="password" id="password_confirm" class="form-control" required>
+                  <button type="button" class="btn btn-outline-secondary" style="border-color:#ced4da" id="togglePasswordConfirm">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="profile_photo" class="form-label">Profile Photo (Max 2MB)</label>
+                <input type="file" id="profile_photo" class="form-control" accept="image/*" required>
+              </div>
+
+              <div class="col-md-6">
+                <label for="resume" class="form-label">Resume (PDF/DOC, Max 5MB)</label>
+                <input type="file" id="resume" class="form-control" accept=".pdf,.doc,.docx" required>
+              </div>
+            </div>
+
+            <button type="submit" class="btn w-100 mt-4" style="background-color:#003F5C; color:white;">Register</button>
+          </form>
+
+          <p class="text-center mt-4">
+            Already have an account?
+            <a href="{% url 'login' %}">Login here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const data = new FormData(form);
+        data.append("first_name", document.getElementById("first_name").value.trim());
+        data.append("last_name", document.getElementById("last_name").value.trim());
+        data.append("email", document.getElementById("email").value.trim());
+        data.append("phone", document.getElementById("phone").value.trim());
+        data.append("password", document.getElementById("password").value);
+        data.append("password_confirm", document.getElementById("password_confirm").value);
+
+        const profilePhoto = document.getElementById("profile_photo").files[0];
+        const resume = document.getElementById("resume").files[0];
+        if (profilePhoto) data.append("profile_photo", profilePhoto);
+        if (resume) data.append("resume", resume);
+
+        try {
+            const res = await fetch(`/api/register/`, {
+              method: "POST",
+              body: data,
+            });
+
+            const result = await res.json();
+
+            if (!res.ok) throw new Error(result.message || result.detail || "Registration failed");
+
+            showMessage(result.message, "success");
+
+          } catch (err) {
+              showMessage(err.message, "error");
+          }
+    });
+
+    document.getElementById("togglePassword").addEventListener("click", () => {
+        const pwd = document.getElementById("password");
+        const icon = document.querySelector("#togglePassword i");
+        const show = pwd.type === "password";
+        pwd.type = show ? "text" : "password";
+        icon.classList.toggle("fa-eye");
+        icon.classList.toggle("fa-eye-slash");
+    });
+
+    document.getElementById("togglePasswordConfirm").addEventListener("click", () => {
+        const pwd = document.getElementById("password_confirm");
+
+        const icon = document.querySelector("#togglePasswordConfirm i");
+        const show = pwd.type === "password";
+        pwd.type = show ? "text" : "password";
+        icon.classList.toggle("fa-eye");
+        icon.classList.toggle("fa-eye-slash");
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,30 @@
+<!-- templates/verification_success.html -->
+{% extends 'base.html' %}
+
+{% block title %}Email Verified - Membership Portal{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card text-center border-0 shadow">
+                <div class="card-body p-5">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem; margin-bottom: 20px;"></i>
+                    <h2 class="card-title mb-3" style="color: #003F5C;">Email Verified!</h2>
+                    <p class="card-text mb-4">Your email has been successfully verified and your account is now active.</p>
+
+                    {% if membership_id %}
+                        <div class="alert alert-info" style="background-color: #CCE0F1; border: none; color: #003F5C;">
+                            <strong>Your Membership ID:</strong><br>
+                            <span style="font-size: 1.2rem; font-weight: bold;">{{ membership_id }}</span>
+                        </div>
+                    {% endif %}
+
+                    <p class="text-muted mb-4">You can now sign in to your account and start building your professional profile.</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary-custom btn-lg">Sign In to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

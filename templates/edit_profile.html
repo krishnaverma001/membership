@@ -1,0 +1,884 @@
+{% extends 'base.html' %}
+{% block title %}Complete Your Profile{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        max-width: 900px;
+        margin: 120px auto;
+        padding: 0 15px;
+    }
+
+    .dashboard-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,63,92,0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .dashboard-header h2 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.8rem;
+    }
+
+    .dashboard-header p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+    }
+
+    .dashboard-body {
+        padding: 2rem;
+    }
+
+    .section-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .section-card:hover {
+        box-shadow: 0 4px 12px rgba(0,63,92,0.08);
+        transform: translateY(-2px);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .section-header i {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        margin-right: 0.75rem;
+    }
+
+    .section-header h5 {
+        margin: 0;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.625rem 0.875rem;
+        transition: all 0.2s;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0,63,92,0.1);
+    }
+
+    .dynamic-entry {
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .remove-btn {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: #fff;
+        color: #dc3545;
+        border: 2px solid #dc3545;
+        border-radius: 6px;
+        padding: 0.25rem 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .remove-btn:hover {
+        background: #dc3545;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+    }
+
+    .remove-btn i {
+        font-size: 0.75rem;
+    }
+
+    .add-btn {
+        background: white;
+        color: var(--primary-color);
+        border: 2px dashed var(--primary-color);
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .add-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        border-style: solid;
+    }
+
+    .add-btn i {
+        margin-right: 0.5rem;
+    }
+
+    .file-upload-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-upload-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: white;
+        border: 2px dashed #cbd5e0;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .file-upload-label:hover {
+        border-color: var(--primary-color);
+        background: #f7fafc;
+    }
+
+    .file-upload-label i {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .file-input {
+        position: absolute;
+        left: -9999px;
+    }
+
+    .file-name {
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: #4a5568;
+        font-weight: 500;
+    }
+
+    .profile-photo-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--primary-color);
+        margin: 1rem auto;
+        display: none;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.875rem 2.5rem;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(0,63,92,0.3);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,63,92,0.4);
+    }
+
+    .fixed-field {
+        background: var(--secondary-color);
+        border-left: 4px solid var(--primary-color);
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+    }
+
+    .fixed-field strong {
+        color: var(--primary-color);
+    }
+
+    .readonly-field {
+        background-color: #e9ecef;
+        color: #495057;
+        cursor: not-allowed;
+    }
+
+    .current-file-preview {
+        background: #f8f9fa;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .current-file-preview i {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+    }
+
+    .current-file-info {
+        flex: 1;
+    }
+
+    .current-file-info strong {
+        display: block;
+        color: #2d3748;
+        margin-bottom: 0.25rem;
+    }
+
+    .current-file-info small {
+        color: #718096;
+    }
+
+    .change-file-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .change-file-link:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-card">
+        <div class="dashboard-header">
+            <h2><i class="fas fa-user-circle me-2"></i>Complete Your Profile</h2>
+            <p>Fill in your details to get started</p>
+        </div>
+
+        <div class="dashboard-body">
+            <form id="profileForm" method="POST" enctype="multipart/form-data">
+                <!-- Personal Information Section -->
+                <div class="section-card">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control readonly-field" value="{{ user.get_full_name|default:'Not provided' }}" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control readonly-field" value="{{ user.email }}" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control readonly-field" value="{{ user.phone|default:'Not provided' }}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Date of Birth *</label>
+                            <input name="dob" type="date" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-select">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <!--
+                        <div class="col-12">
+                            <label class="form-label">Address</label>
+                            <textarea name="address" class="form-control" rows="2" placeholder="Enter your full address"></textarea>
+                        </div>
+                        -->
+                    </div>
+                </div>
+
+                <div class="row g-4 align-items-start">
+                    <div class="col-md-6">
+                        <div class="section-card">
+                            <div class="section-header">
+                                <i class="fas fa-camera"></i>
+                                <h5>Profile Photo</h5>
+                            </div>
+
+                            <div class="text-center">
+                                <!-- Current Photo Preview -->
+                                <div id="currentPhotoContainer" style="display: none;">
+                                    <img id="currentPhoto" class="profile-photo-preview mb-3" alt="Current Profile Photo" style="display: block; margin: 0 auto 1rem;">
+                                </div>
+
+                                <!-- New Photo Preview -->
+                                <img id="photoPreview" class="profile-photo-preview mb-3" alt="Profile Preview" style="max-width:150px; border-radius:50%; display:none;">
+
+                                <div class="file-upload-wrapper">
+                                    <label for="profilePhoto" class="file-upload-label">
+                                        <div>
+                                            <i class="fas fa-cloud-upload-alt d-block"></i>
+                                            <span id="photoUploadText">Click to upload profile photo</span>
+                                            <div class="file-name" id="photoFileName"></div>
+                                            <small class="d-block mt-2 text-muted">Max size: 2MB</small>
+                                        </div>
+                                    </label>
+                                    <input type="file" id="profilePhoto" name="profile_photo" class="file-input" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="section-card">
+                            <div class="section-header">
+                                <i class="fas fa-file-alt"></i>
+                                <h5>Resume / CV</h5>
+                            </div>
+
+                            <!-- Current Resume Preview -->
+                            <div id="currentResumeContainer" style="display: none;">
+                                <div class="current-file-preview">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <div class="current-file-info">
+                                        <strong>Current Resume</strong>
+                                        <small id="currentResumeName"></small>
+                                    </div>
+                                    <a id="currentResumeLink" href="#" target="_blank" class="change-file-link">
+                                        <i class="fas fa-external-link-alt"></i> View
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="file-upload-wrapper text-center">
+                                <label for="resume" class="file-upload-label">
+                                    <div>
+                                        <i class="fas fa-file-upload d-block"></i>
+                                        <span id="resumeUploadText">Click to upload your resume</span>
+                                        <div class="file-name" id="resumeFileName"></div>
+                                        <small class="d-block mt-2 text-muted">Accepted: PDF, DOC, DOCX (Max: 5MB)</small>
+                                    </div>
+                                </label>
+                                <input type="file" id="resume" name="resume" class="file-input" accept=".pdf,.doc,.docx">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h5>Education</h5>
+                    </div>
+
+                    <div id="educationContainer">
+                        <div class="dynamic-entry" data-index="0">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Institution</label>
+                                    <input name="institution_0" type="text" class="form-control" placeholder="e.g., Harvard University">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Degree</label>
+                                    <input name="degree_0" type="text" class="form-control" placeholder="e.g., Bachelor of Science">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Field of Study</label>
+                                    <input name="field_of_study_0" type="text" class="form-control" placeholder="e.g., Computer Science">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Start Date</label>
+                                    <input name="edu_start_date_0" type="date" class="form-control edu-start-date">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">End Date</label>
+                                    <input name="edu_end_date_0" type="date" class="form-control edu-end-date">
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input edu-current-checkbox" type="checkbox" name="edu_is_current_0" id="eduCurrent0" data-index="0">
+                                        <label class="form-check-label" for="eduCurrent0">
+                                            Currently studying here
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="edu_description_0" class="form-control" rows="2" placeholder="Achievements, coursework, etc."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn add-btn w-100" onclick="addEducation()">
+                        <i class="fas fa-plus"></i>Add Another Education
+                    </button>
+                </div>
+
+                <!-- Work Experience Section -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <i class="fas fa-briefcase"></i>
+                        <h5>Work Experience</h5>
+                    </div>
+
+                    <div id="experienceContainer">
+                        <div class="dynamic-entry" data-index="0">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Company</label>
+                                    <input name="company_0" type="text" class="form-control" placeholder="e.g., Google Inc.">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Position</label>
+                                    <input name="position_0" type="text" class="form-control" placeholder="e.g., Software Engineer">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Start Date</label>
+                                    <input name="exp_start_date_0" type="date" class="form-control exp-start-date">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">End Date</label>
+                                    <input name="exp_end_date_0" type="date" class="form-control exp-end-date">
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input exp-current-checkbox" type="checkbox" name="exp_is_current_0" id="expCurrent0" data-index="0">
+                                        <label class="form-check-label" for="expCurrent0">
+                                            Currently working here
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="exp_description_0" class="form-control" rows="3" placeholder="Describe your responsibilities and achievements..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn add-btn w-100" onclick="addExperience()">
+                        <i class="fas fa-plus"></i>Add Another Experience
+                    </button>
+                </div>
+
+                <!-- Hidden Counters -->
+                <input type="hidden" name="education_count" id="educationCount" value="1">
+                <input type="hidden" name="experience_count" id="experienceCount" value="1">
+
+                <!-- Submit Button -->
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn submit-btn">
+                        <i class="fas fa-check-circle me-2"></i>Complete Profile Setup
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let educationCount = 1;
+    let experienceCount = 1;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchUserProfile();
+
+        setupCurrentCheckboxListener(0, 'edu');
+        setupCurrentCheckboxListener(0, 'exp');
+
+        const form = document.getElementById('profileForm');
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            if (!formData.get('profile_photo') || formData.get('profile_photo').size === 0) {
+                formData.delete('profile_photo');
+            }
+            if (!formData.get('resume') || formData.get('resume').size === 0) {
+                formData.delete('resume');
+            }
+
+            try {
+                const response = await fetch('/api/profile/', {
+                    method: 'PATCH',
+                    body: formData,
+                    credentials: 'include',
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    showMessage(data.message, 'success');
+
+                    // Refresh previews
+                    if (data.profile_photo) {
+                        document.getElementById('currentPhoto').src = data.profile_photo;
+                        document.getElementById('currentPhotoContainer').style.display = 'block';
+                    }
+
+                    if (data.resume) {
+                        document.getElementById('currentResumeLink').href = data.resume;
+                        document.getElementById('currentResumeName').textContent = data.resume.split('/').pop();
+                        document.getElementById('currentResumeContainer').style.display = 'block';
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = '/dashboard/';
+                    }, 2000);
+                } else {
+                    const err = await response.json();
+                    console.error('Update failed:', err);
+                    showMessage(err.message || 'Failed to update profile.', 'error');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                showMessage('Network error while updating profile.', 'error');
+            }
+        });
+    });
+
+    async function fetchUserProfile() {
+        try {
+            const response = await fetch('/api/profile/', {
+                method: 'GET',
+                credentials: 'include', // JWT cookies included
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                // Populate form values
+                if (data.dob) document.querySelector('[name="dob"]').value = data.dob;
+                if (data.gender) document.querySelector('[name="gender"]').value = data.gender;
+
+                // if (data.address) document.querySelector('[name="address"]').value = data.address;
+
+                // Profile photo preview
+                if (data.profile_photo) {
+                    const photo = document.getElementById('currentPhoto');
+                    const container = document.getElementById('currentPhotoContainer');
+                    photo.src = data.profile_photo;
+                    container.style.display = 'block';
+                }
+
+                // Resume preview
+                if (data.resume) {
+                    const container = document.getElementById('currentResumeContainer');
+                    const link = document.getElementById('currentResumeLink');
+                    const name = document.getElementById('currentResumeName');
+                    link.href = data.resume;
+                    name.textContent = data.resume.split('/').pop();
+                    container.style.display = 'block';
+                }
+
+                // Education preview
+                if (data.education_set && data.education_set.length > 0) {
+                    const container = document.getElementById('educationContainer');
+                    container.innerHTML = ''; // clear default blank entry
+
+                    data.education_set.forEach((edu, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'dynamic-entry';
+                        div.setAttribute('data-index', index);
+
+                        const showRemoveBtn = data.education_set.length > 1;
+                        div.innerHTML = `
+                            ${showRemoveBtn ? `<button type="button" class="remove-btn" onclick="removeEntry(this)">
+                                <i class="fas fa-minus"></i><span>Remove</span>
+                            </button>` : ''}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Institution</label>
+                                    <input name="institution_${index}" type="text" class="form-control" value="${edu.institution || ''}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Degree</label>
+                                    <input name="degree_${index}" type="text" class="form-control" value="${edu.degree || ''}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Field of Study</label>
+                                    <input name="field_of_study_${index}" type="text" class="form-control" value="${edu.field_of_study || ''}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Start Date</label>
+                                    <input name="edu_start_date_${index}" type="date" class="form-control edu-start-date" value="${edu.start_date || ''}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">End Date</label>
+                                    <input name="edu_end_date_${index}" type="date" class="form-control edu-end-date" value="${edu.end_date || ''}" ${edu.is_current ? 'disabled' : ''}>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input edu-current-checkbox" type="checkbox" name="edu_is_current_${index}" id="eduCurrent${index}" data-index="${index}" ${edu.is_current ? 'checked' : ''}>
+                                        <label class="form-check-label" for="eduCurrent${index}">Currently studying here</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="edu_description_${index}" class="form-control" rows="2">${edu.description || ''}</textarea>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                        setupCurrentCheckboxListener(index, 'edu');
+                    });
+
+                    educationCount = data.education_set.length;
+                    document.getElementById('educationCount').value = educationCount;
+                }
+
+                // Work Experience
+                if (data.work_experience_set && data.work_experience_set.length > 0) {
+                    const container = document.getElementById('experienceContainer');
+                    container.innerHTML = ''; // clear default
+
+                    data.work_experience_set.forEach((exp, index) => {
+                        const div = document.createElement('div');
+                        div.className = 'dynamic-entry';
+                        div.setAttribute('data-index', index);
+
+                        const showRemoveBtn = data.work_experience_set.length > 1;
+                        div.innerHTML = `
+                            ${showRemoveBtn ? `<button type="button" class="remove-btn" onclick="removeEntry(this)">
+                                <i class="fas fa-minus"></i><span>Remove</span>
+                            </button>` : ''}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Company</label>
+                                    <input name="company_${index}" type="text" class="form-control" value="${exp.company || ''}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Position</label>
+                                    <input name="position_${index}" type="text" class="form-control" value="${exp.position || ''}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Start Date</label>
+                                    <input name="exp_start_date_${index}" type="date" class="form-control exp-start-date" value="${exp.start_date || ''}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">End Date</label>
+                                    <input name="exp_end_date_${index}" type="date" class="form-control exp-end-date" value="${exp.end_date || ''}" ${exp.is_current ? 'disabled' : ''}>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input exp-current-checkbox" type="checkbox" name="exp_is_current_${index}" id="expCurrent${index}" data-index="${index}" ${exp.is_current ? 'checked' : ''}>
+                                        <label class="form-check-label" for="expCurrent${index}">Currently working here</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="exp_description_${index}" class="form-control" rows="3">${exp.description || ''}</textarea>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                        setupCurrentCheckboxListener(index, 'exp');
+                    });
+
+                    experienceCount = data.work_experience_set.length;
+                    document.getElementById('experienceCount').value = experienceCount;
+                }
+            } else {
+                console.error('Unauthorized or failed to load profile.');
+            }
+        } catch (err) {
+            console.error('Error fetching profile:', err);
+        }
+    }
+
+    // Setup checkbox listener for blocking end date
+    function setupCurrentCheckboxListener(index, type) {
+        const checkbox = document.getElementById(`${type}Current${index}`);
+        const endDateInput = checkbox.closest('.dynamic-entry').querySelector(`.${type}-end-date`);
+
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                endDateInput.value = '';
+                endDateInput.disabled = true;
+                endDateInput.style.backgroundColor = '#e9ecef';
+                endDateInput.style.cursor = 'not-allowed';
+            } else {
+                endDateInput.disabled = false;
+                endDateInput.style.backgroundColor = '';
+                endDateInput.style.cursor = '';
+            }
+        });
+    }
+
+    // Profile Photo handling
+    document.getElementById('profilePhoto').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById('photoPreview');
+        const fileName = document.getElementById('photoFileName');
+
+        if (file) {
+            fileName.textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = function (ev) {
+                preview.src = ev.target.result;
+                preview.style.display = 'block';
+                // Hide current photo when new one is selected
+                document.getElementById('currentPhotoContainer').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.style.display = 'none';
+            fileName.textContent = '';
+        }
+    });
+
+    // Resume File handling
+    document.getElementById('resume').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('resumeFileName').textContent = file.name;
+            // Hide current resume when new one is selected
+            document.getElementById('currentResumeContainer').style.display = 'none';
+        }
+    });
+
+    // Add Education
+    function addEducation() {
+        const container = document.getElementById('educationContainer');
+        const div = document.createElement('div');
+        div.className = 'dynamic-entry';
+        div.setAttribute('data-index', educationCount);
+        div.innerHTML = `
+            <button type="button" class="remove-btn" onclick="removeEntry(this)">
+                <i class="fas fa-minus"></i>
+                <span>Remove</span>
+            </button>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Institution</label>
+                    <input name="institution_${educationCount}" type="text" class="form-control" placeholder="e.g., Harvard University">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Degree</label>
+                    <input name="degree_${educationCount}" type="text" class="form-control" placeholder="e.g., Bachelor of Science">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Field of Study</label>
+                    <input name="field_of_study_${educationCount}" type="text" class="form-control" placeholder="e.g., Computer Science">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Start Date</label>
+                    <input name="edu_start_date_${educationCount}" type="date" class="form-control edu-start-date">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">End Date</label>
+                    <input name="edu_end_date_${educationCount}" type="date" class="form-control edu-end-date">
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input class="form-check-input edu-current-checkbox" type="checkbox" name="edu_is_current_${educationCount}" id="eduCurrent${educationCount}" data-index="${educationCount}">
+                        <label class="form-check-label" for="eduCurrent${educationCount}">
+                            Currently studying here
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea name="edu_description_${educationCount}" class="form-control" rows="2" placeholder="Achievements, coursework, etc."></textarea>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+        setupCurrentCheckboxListener(educationCount, 'edu');
+        educationCount++;
+        document.getElementById('educationCount').value = educationCount;
+    }
+
+    // Add Experience
+    function addExperience() {
+        const container = document.getElementById('experienceContainer');
+        const div = document.createElement('div');
+        div.className = 'dynamic-entry';
+        div.setAttribute('data-index', experienceCount);
+        div.innerHTML = `
+            <button type="button" class="remove-btn" onclick="removeEntry(this)">
+                <i class="fas fa-minus"></i>
+                <span>Remove</span>
+            </button>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Company</label>
+                    <input name="company_${experienceCount}" type="text" class="form-control" placeholder="e.g., Google Inc.">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Position</label>
+                    <input name="position_${experienceCount}" type="text" class="form-control" placeholder="e.g., Software Engineer">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Start Date</label>
+                    <input name="exp_start_date_${experienceCount}" type="date" class="form-control exp-start-date">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">End Date</label>
+                    <input name="exp_end_date_${experienceCount}" type="date" class="form-control exp-end-date">
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input class="form-check-input exp-current-checkbox" type="checkbox" name="exp_is_current_${experienceCount}" id="expCurrent${experienceCount}" data-index="${experienceCount}">
+                        <label class="form-check-label" for="expCurrent${experienceCount}">
+                            Currently working here
+                        </label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea name="exp_description_${experienceCount}" class="form-control" rows="3" placeholder="Describe your responsibilities and achievements..."></textarea>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+        setupCurrentCheckboxListener(experienceCount, 'exp');
+        experienceCount++;
+        document.getElementById('experienceCount').value = experienceCount;
+    }
+
+    // Remove Entry
+    function removeEntry(btn) {
+        btn.parentElement.remove();
+    }
+</script>
+{% endblock %}

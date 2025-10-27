@@ -1,0 +1,23 @@
+<!-- templates/verification_failed.html -->
+{% extends 'base.html' %}
+
+{% block title %}Verification Failed - Membership Portal{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card text-center border-0 shadow">
+                <div class="card-body p-5">
+                    <i class="fas fa-times-circle text-danger" style="font-size: 4rem; margin-bottom: 20px;"></i>
+                    <h2 class="card-title mb-3" style="color: #dc3545;">Verification Failed</h2>
+                    <p class="card-text mb-4">{{ message }}</p>
+                    <p class="text-muted mb-4">The verification link may have expired or is invalid. Please try registering again.</p>
+                    <a href="{% url 'register' %}" class="btn btn-primary-custom btn-lg">Register Again</a>
+                    <a href="/" class="btn btn-light btn-lg ms-2">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

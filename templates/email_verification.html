@@ -1,0 +1,33 @@
+{% autoescape off %}
+<html>
+  <body style="font-family: 'Poppins', sans-serif; background-color: #f9f9f9; color: #333; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05); padding: 30px;">
+
+      <h2 style="margin-top: 0;">Hello {{ name }},</h2>
+
+      <p>Thank you for registering with our <strong>Membership Portal</strong>!</p>
+
+      <p><strong>Your Membership ID:</strong> {{ membership_id }}</p>
+
+      <p>Please verify your email address by clicking the button below:</p>
+      <p style="text-align: center; margin: 30px 0;">
+        <a href="{{ verification_url }}"
+           style="background-color: #333; color: #fff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: 500;">
+          Verify Email
+        </a>
+      </p>
+
+      <p>This link is valid for <strong>1 hour</strong>.</p>
+
+      <p>If you didn't create this account, please ignore this email.</p>
+
+      <p>Best regards,<br>
+      <strong>Membership Portal Team</strong></p>
+
+      <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+
+      <p style="font-size: 14px; color: #777;">&copy; {{ year }} Membership Portal. All rights reserved.</p>
+    </div>
+  </body>
+</html>
+{% endautoescape %}
