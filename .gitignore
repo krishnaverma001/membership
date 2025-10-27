@@ -3,4 +3,4 @@
 db.sqlite3
 .env
 migrations/
-/.idea
+.idea/
